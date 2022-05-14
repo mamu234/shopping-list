@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container"> 
+
+    <h1>Welcome to my shopping list</h1>
+    <a href="/items" type="button" >Add items </a>
+    {% for good in goods %}
+     <p>item: {{good.item }}</p>
+     <p>quantity:{{good.amount}}</p>
+     <a href="/delete/{{ good.id }}" class="btn btn-danger">Delete</a>
+
+     {% endfor %}
+
+</div>
+
+
+{% endblock %}

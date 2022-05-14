@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% import 'bootstrap/wtf.html' as radio %}
+
+{% block content %}
+
+<div class="container mt-5">{{ radio.quick_form(data) }}</div>
+
+{% endblock %}
