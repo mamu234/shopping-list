@@ -1,5 +1,5 @@
 from app import app
-from app import db, render_template,redirect,url_for
+from app import db, render_template,redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField
 from wtforms.validators import DataRequired
