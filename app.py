@@ -1,56 +1,80 @@
+
 from flask import Flask,render_template,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField
 from wtforms.validators import DataRequired
+from werkzeug.security import generate_password_hash,check_password_hash
+from flask_migrate import Migrate
 
 
-class ShoppingForm(FlaskForm):
-    item = StringField('item', validators=[DataRequired()])
-    quantity = StringField('quantity', validators=[DataRequired()])
+
+app = Flask(__name__)
+
+
+
+
+
+app.config['SECRET_KEY']='123'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] =True
+
+db = SQLAlchemy(app)
+
+migrate = Migrate(app,db)
+
+bootstrap = Bootstrap(app)
+
+class PitchForm(FlaskForm):
+    first_name  = StringField('firstname', validators=[DataRequired()])
+    last_name  = StringField('lastname', validators=[DataRequired()])
+    user_name  = StringField('username', validators=[DataRequired()])
+    email = StringField('email', validators=[DataRequired()])
     submit = SubmitField('add')
 
   
 
 
-app = Flask(__name__)
+class User(db.Model):
+   id = db.Column(db.Integer,primary_key = True)
+   user = db.Column(db.String(255))
+   
+def __repr__(self):
+ return f'User {self.username}'
 
-app.config['SECRET_KEY']='123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://carolyne:123@localhost/list'
-
-bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
-
-
-class Shopping(db.Model):
-    __tablename__ = 'lists'
+class Pitches(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    item = db.Column(db.String(255))
-    amount = db.Column(db.String(150))
-    
+    name = db.Column(db.String(255))
+    user = db.Column(db.Integer,db.ForeignKey('user.id'))
 
+    def __repr__(self):
+        return f'User {self.name}'
+
+
+
+  
 
 @app.route('/')
 def index():
-    items = Shopping.query.all()
-    return render_template('index.html',goods=items)
+    pitch = Pitches.query.all()
+    return render_template('index.html',post=pitch)
 
 
-@app.route('/items',methods=['GET','POST'])   
-def items():
-    form = ShoppingForm()
+@app.route('/pitches',methods=['GET','POST'])   
+def pitches():
+    form = PitchForm()
     if form.validate_on_submit():
-        item = Shopping(item=form.item.data, amount=form.quantity.data)
-        db.session.add(item)
+        user= User(user=form.user_name.data)
+        db.session.add(user)
         db.session.commit()
         return redirect(url_for('index'))
-    return render_template('list.html', data=form)
+    return render_template('pitch.html', data=form)
 
-@app.route('/delete/<int:item_id>')
-def delete(item_id):
-    item = Shopping.query.filter_by(id=item_id).first()
-    db.session.delete(item)
+@app.route('/delete/<int:pitch_id>')
+def delete(pitch_id):
+    pitch = Pitches.query.filter_by(id=pitch_id).first()
+    db.session.delete(pitch)
     db.session.commit()
     return redirect(url_for('index'))
 
@@ -58,8 +82,10 @@ def delete(item_id):
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, Shopping=Shopping)
-        
+    return dict(app = app,db = db,User = User, Pitches = Pitches)
+
+
+
 
 if __name__ == "__main__":
     

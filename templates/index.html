@@ -4,12 +4,13 @@
 
 <div class="container"> 
 
-    <h1>Welcome to my shopping list</h1>
-    <a href="/items" type="button" >Add items </a>
-    {% for good in goods %}
-     <p>item: {{good.item }}</p>
-     <p>quantity:{{good.amount}}</p>
-     <a href="/delete/{{ good.id }}" class="btn btn-danger">Delete</a>
+    <h1>Welcome to my pitch world </h1>
+    <a href="/pitches" type="button" >Add pitches </a>
+    {% for post in posts %}
+     <p>first_name: {{post.first_name}}</p>
+     <p>last_name:{{post.last_name}}</p>
+     <p>user_name:{{post.email}}</p>
+     <a href="/delete/{{ post.id }}" class="btn btn-danger">Delete</a>
 
      {% endfor %}
 
