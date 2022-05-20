@@ -1,8 +1,17 @@
 from app import app
-from app import db, render_template
+from app import db, render_template,redirect,url_for
+from flask_wtf import FlaskForm
+from wtforms import StringField,SubmitField
+from wtforms.validators import DataRequired
+from werkzeug.security import generate_password_hash,check_password_hash
+from flask_migrate import Migrate
 
-
-
+class PitchForm(FlaskForm):
+    first_name  = StringField('firstname', validators=[DataRequired()])
+    last_name  = StringField('lastname', validators=[DataRequired()])
+    user_name  = StringField('username', validators=[DataRequired()])
+    email = StringField('email', validators=[DataRequired()])
+    submit = SubmitField('add')
 
 
 class User(db.Model):
